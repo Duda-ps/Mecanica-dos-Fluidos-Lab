@@ -1,0 +1,67 @@
+clear
+clc
+
+% Cálculo do Número de Reynolds e da Incerteza Combinada
+
+% Dados fornecidos
+massa = [1220.6, 1219.9, 1206.2, 1219.2, 1104.3]; % Massa (g)
+tempo = [70.33, 70.64, 69.86, 70.54, 65.14]; % Tempo (s)
+diametro = [31.5, 30.8, 29.5, 29.0, 31.6, 32.1, 31.0, 31.7, 31.5, 32.0]; % Diâmetro (mm)
+n = length(diametro); % Número de medições d
+mi = 8.53e-4; % Viscosidade dinâmica (Pa.s)
+
+% Conversão para SI
+diametro_m = diametro / 1000; 
+
+% Cálculo das médias
+t_medio = mean(tempo);
+m_medio_gramas = mean(massa); % Média da massa em g 
+m_medio_kg = m_medio_gramas / 1000; % Convertendo para kg
+D_medio_mm = mean(diametro); % Média do diâmetro em mm
+D_medio_m = mean(diametro_m); % Média do diâmetro em metros
+
+% Cálculo dos desvios padrão
+desvio_t = std(tempo);
+desvio_m_gramas = std(massa);
+desvio_m_kg = desvio_m_gramas / 1000; 
+desvio_D_mm = std(diametro);
+desvio_D_m = std(diametro_m);
+
+% Cálculo das incertezas tipo A
+u_t = desvio_t / sqrt(length(tempo));
+u_m_gramas = desvio_m_gramas / sqrt(length(massa));
+u_m_kg = desvio_m_kg / sqrt(length(massa));
+u_D_mm = desvio_D_mm / sqrt(n);
+u_D_m = desvio_D_m / sqrt(n);
+
+% Exibição dos resultados
+fprintf('------------------------ Resultados Calculados ---------------------\n');
+fprintf('Média do tempo: t_medio = %.2f s\n', t_medio);
+fprintf('Média da massa: m_medio = %.2f g (%.2f kg)\n', m_medio_gramas, m_medio_kg);
+fprintf('Média do diâmetro: D_medio = %.2f mm (%.2f m)\n', D_medio_mm, D_medio_m);
+
+fprintf('\n------------------------ Desvios Padrão ------------------------\n');
+fprintf('Desvio padrão do tempo: desvio_t = %.2f s\n', desvio_t);
+fprintf('Desvio padrão da massa: desvio_m = %.2f g (%.2f kg)\n', desvio_m_gramas, desvio_m_kg);
+fprintf('Desvio padrão do diâmetro: desvio_D = %.2f mm (%.2f m)\n', desvio_D_mm, desvio_D_m);
+
+fprintf('\n------------------------ Incertezas Tipo A ------------------------\n');
+fprintf('Incerteza do tempo: u_t = %.2f s\n', u_t);
+fprintf('Incerteza da massa: u_m = %.2f g (%.2f kg)\n', u_m_gramas, u_m_kg);
+fprintf('Incerteza do diâmetro: u_D = %.2f mm (%.2f m)\n', u_D_mm, u_D_m);
+
+% Cálculo do Número de Reynolds
+Re = (4 * m_medio_kg) / (mi * pi * D_medio_m * t_medio);
+
+% Derivadas parciais para incerteza combinada
+partial_m = (4) / (mi * pi * D_medio_m * t_medio);
+partial_t = -(4 * m_medio_kg) / (mi * pi * D_medio_m * t_medio^2);
+partial_D = -(4 * m_medio_kg) / (mi * pi * D_medio_m^2 * t_medio);
+
+% Incerteza combinada
+u_Re = sqrt((partial_m * u_m_kg)^2 + (partial_t * u_t)^2 + (partial_D * u_D_m)^2);
+
+% Exibição Número de Reynolds e Incerteza Combinada
+fprintf('\n------------------------ Número de Reynolds e Incerteza Combinada ------------------------\n');
+fprintf('Número de Reynolds: Re = %.2f\n', Re);
+fprintf('Incerteza combinada do Reynolds: u_Re = %.2f\n', u_Re);
