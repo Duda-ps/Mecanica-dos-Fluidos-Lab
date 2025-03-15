@@ -65,3 +65,17 @@ u_Re = sqrt((partial_m * u_m_kg)^2 + (partial_t * u_t)^2 + (partial_D * u_D_m)^2
 fprintf('\n------------------------ Número de Reynolds e Incerteza Combinada ------------------------\n');
 fprintf('Número de Reynolds: Re = %.2f\n', Re);
 fprintf('Incerteza combinada do Reynolds: u_Re = %.2f\n', u_Re);
+
+
+% Determinação do tipo de escoamento interno
+if Re < 2000
+    classificacao = 'LAMINAR';
+elseif Re >= 2000 && Re <= 4000
+    classificacao = 'REGIÃO DE TRANSIÇÃO';
+else
+    classificacao = 'TURBULENTO';
+end
+
+% Exibição do resultado
+fprintf('Número de Reynolds: Re = %.2f ± %.2f\n', Re, u_Re);
+fprintf('Classificação do escoamento: %s\n', classificacao);
